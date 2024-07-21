@@ -30,11 +30,11 @@ local function OnKeyPress(Input, GameProcessedEvent)
     if not GameProcessedEvent then 
         if Input.KeyCode == Keybind then
             Toggle = not Toggle
-        elseif Input.KeyCode == Enum.KeyCode[uwuCamMain.UnlockKey:upper()] then
+        elseif Input.KeyCode == Enum.KeyCode[CamMain.UnlockKey:upper()] then
             if CToggle then
                 CToggle = false
                 CTarget = nil
-                if uwuMain.Notifications then
+                if Main.Notifications then
                     SendNotification("unlocked")
                 end
             end
@@ -69,14 +69,14 @@ RunService.RenderStepped:Connect(RotateCamera)
 
 local mainevent = MainEventLocate()
 
-local uwulone = getgenv().lone
-local uwuMain = uwulone.General
-local uwuCamMain = uwulone.Camlock.Main
-local uwuCamFOV = uwulone.Camlock.FOV
-local uwuSilentMain = uwulone.Silent.Main
-local uwuSilentFOV = uwulone.Silent.FOV
-local uwuTrace = uwulone.Tracer
-local uwuAutoPred = uwulone.AutoPrediction
+local lone = getgenv().lone
+local Main = lone.General
+local CamMain = lone.Camlock.Main
+local CamFOV = lone.Camlock.FOV
+local SilentMain = lone.Silent.Main
+local SilentFOV = lone.Silent.FOV
+local Trace = lone.Tracer
+local AutoPred = lone.AutoPrediction
 
 -- Hood custom bypasses
 for _, con in next, getconnections(workspace.CurrentCamera.Changed) do
@@ -132,31 +132,31 @@ local function SendNotification(text)
 end 
 
 -- Call notification function
-if uwuMain.Notifications then
+if Main.Notifications then
     SendNotification("lone Is Loading")
     wait(3.5)
     SendNotification("Successfully Loaded lone")
 end
 
 local CamlockFOV = Drawing.new("Circle")
-CamlockFOV.Visible = uwuCamFOV.ShowFOV
+CamlockFOV.Visible = CamFOV.ShowFOV
 CamlockFOV.Thickness = 1
 CamlockFOV.NumSides = 30
-CamlockFOV.Radius = uwuCamFOV.Radius * 3
-CamlockFOV.Color = uwuCamFOV.Color
-CamlockFOV.Filled = uwuCamFOV.Filled
-CamlockFOV.Transparency = uwuCamFOV.Transparency
+CamlockFOV.Radius = CamFOV.Radius * 3
+CamlockFOV.Color = CamFOV.Color
+CamlockFOV.Filled = CamFOV.Filled
+CamlockFOV.Transparency = CamFOV.Transparency
 
 local SilentFOV = Drawing.new("Circle")
-SilentFOV.Visible = uwuSilentFOV.ShowFOV
+SilentFOV.Visible = SilentFOV.ShowFOV
 SilentFOV.Thickness = 1
 SilentFOV.NumSides = 30
-SilentFOV.Radius = uwuSilentFOV.Radius * 3
-SilentFOV.Color = uwuSilentFOV.Color
-SilentFOV.Filled = uwuSilentFOV.Filled
-SilentFOV.Transparency = uwuSilentFOV.Transparency
+SilentFOV.Radius = SilentFOV.Radius * 3
+SilentFOV.Color = SilentFOV.Color
+SilentFOV.Filled = SilentFOV.Filled
+SilentFOV.Transparency = SilentFOV.Transparency
 
-local function uwuFindTawget() 
+local function FindTawget() 
     local d, t = math.huge, nil
     for _,v in pairs(plrs:GetPlayers()) do
         local _,os = c:WorldToViewportPoint(v.Character.PrimaryPart.Position)
@@ -172,11 +172,11 @@ local function uwuFindTawget()
     return t
 end
 
-local function uwuFindPart() 
+local function FindPart() 
     local d, p = math.huge, nil
     if CTarget then
         for _,v in pairs(CTarget.Character:GetChildren()) do
-            if table.find(uwuCamMain.Parts, v.Name) then
+            if table.find(CamMain.Parts, v.Name) then
                 local pos = c:WorldToViewportPoint(v.Position)
                 local Magn = (vect2(m.X, m.Y + 36) - vect2(pos.X, pos.Y)).Magnitude
                 if Magn < d then
@@ -189,11 +189,11 @@ local function uwuFindPart()
     end
 end
 
-local function uwuFindSilentPart() 
+local function FindSilentPart() 
     local d, p = math.huge, nil
     if CTarget then
         for _,v in pairs(CTarget.Character:GetChildren()) do
-            if table.find(uwuSilentMain.Parts, v.Name) then
+            if table.find(SilentMain.Parts, v.Name) then
                 local pos = c:WorldToViewportPoint(v.Position)
                 local Magn = (vect2(m.X, m.Y + 36) - vect2(pos.X, pos.Y)).Magnitude
                 if Magn < d then
@@ -206,7 +206,7 @@ local function uwuFindSilentPart()
     end
 end
 
-local function uwuCheckAnti(targ) -- // Anti-aim detection
+local function CheckAnti(targ) -- // Anti-aim detection
     if (targ.Character.HumanoidRootPart.Velocity.Y < -5 and targ.Character.Humanoid:GetState() ~= Enum.HumanoidStateType.Freefall) or targ.Character.HumanoidRootPart.Velocity.Y < -50 then
         return true
     elseif targ and (targ.Character.HumanoidRootPart.Velocity.X > 35 or targ.Character.HumanoidRootPart.Velocity.X < -35) then
@@ -220,10 +220,10 @@ local function uwuCheckAnti(targ) -- // Anti-aim detection
     end
 end
 
-local function InSilentRadiuwus(target, section, fov) -- Checks if player is in the fov
+local function InSilentRadis(target, section, fov) -- Checks if player is in the fov
     if target then
         local pos = nil
-        if not uwuCheckAnti(target) then
+        if not CheckAnti(target) then
             pos = c:WorldToViewportPoint(target.Character.PrimaryPart.Position + target.Character.PrimaryPart.Velocity * section.Prediction)
         else
             pos = c:WorldToViewportPoint(target.Character.PrimaryPart.Position + ((target.Character.Humanoid.MoveDirection * target.Character.Humanoid.WalkSpeed) * section.Prediction))
@@ -239,21 +239,21 @@ end
 
 local function Silent()
     if STarget then
-        if SPart and InSilentRadiuwus(STarget, uwuSilentMain, SilentFOV.Radius) then
-            if not uwuCheckAnti(STarget) then
-                mainevent:FireServer(namecalltype, STarget.Character[SPart].Position + (STarget.Character[SPart].Velocity * uwuSilentMain.Prediction))
+        if SPart and InSilentRadis(STarget, SilentMain, SilentFOV.Radius) then
+            if not CheckAnti(STarget) then
+                mainevent:FireServer(namecalltype, STarget.Character[SPart].Position + (STarget.Character[SPart].Velocity * SilentMain.Prediction))
             else
-                mainevent:FireServer(namecalltype, STarget.Character[SPart].Position + ((STarget.Character.Humanoid.MoveDirection * STarget.Character.Humanoid.WalkSpeed) * uwuSilentMain.Prediction))
+                mainevent:FireServer(namecalltype, STarget.Character[SPart].Position + ((STarget.Character.Humanoid.MoveDirection * STarget.Character.Humanoid.WalkSpeed) * SilentMain.Prediction))
             end
         end
     end
 end
 
-local function InRadiuwus(target, section, fov) -- Checks if player is in the fov
+local function InRadis(target, section, fov) -- Checks if player is in the fov
     if target then
-        if uwuCamFOV.UseFOV then
+        if CamFOV.UseFOV then
             local pos = nil
-            if not uwuCheckAnti(target) then
+            if not CheckAnti(target) then
                 pos = c:WorldToViewportPoint(target.Character.PrimaryPart.Position + target.Character.PrimaryPart.Velocity * section.Prediction)
             else
                 pos = c:WorldToViewportPoint(target.Character.PrimaryPart.Position + ((target.Character.Humanoid.MoveDirection * target.Character.Humanoid.WalkSpeed) * section.Prediction))
@@ -272,22 +272,22 @@ end
 
 uis.InputBegan:Connect(function(k, t)
     if not t then
-        if k.KeyCode == Enum.KeyCode[uwuCamMain.Key:upper()] then
+        if k.KeyCode == Enum.KeyCode[CamMain.Key:upper()] then
             CToggle = not CToggle
             if CToggle then
-                CTarget = uwuFindTawget()
-                if uwuMain.Notifications and CTarget then
+                CTarget = FindTawget()
+                if Main.Notifications and CTarget then
                     SendNotification("locked onto "..CTarget.Name)
                 end
             else
                 CTarget = nil
-                if uwuMain.Notifications then
+                if Main.Notifications then
                     SendNotification("unlocked")
                 end
             end
-        elseif k.KeyCode == Enum.KeyCode[uwuSilentMain.Toggle:upper()] and uwuSilentMain == "Regular" then
+        elseif k.KeyCode == Enum.KeyCode[SilentMain.Toggle:upper()] and SilentMain == "Regular" then
             SToggle = not SToggle
-            if uwuMain.Notifications then
+            if Main.Notifications then
                 SendNotification(SToggle and "silent enabled" or "silent disabled")
             end
         end
@@ -296,43 +296,43 @@ end)
 
 rs.RenderStepped:Connect(function()
     if CTarget then
-        CPart = uwuFindPart()
+        CPart = FindPart()
         local pos = nil
         local cum = nil
         if CTarget.Character.BodyEffects["K.O"].Value == true or lplr.Character.BodyEffects["K.O"].Value == true then
             CToggle = false
             CTarget = nil
         else
-            if uwuCamMain.Shake then
-                if uwuCamMain.PredictMovement then
-                    if not uwuCheckAnti(CTarget) then
-                        cum = CTarget.Character[CPart].Position + CTarget.Character[CPart].Velocity * uwuCamMain.Prediction + (vect3(
-                            math.random(-uwuCamMain.ShakeValue, uwuCamMain.ShakeValue),
-                            math.random(-uwuCamMain.ShakeValue, uwuCamMain.ShakeValue),
-                            math.random(-uwuCamMain.ShakeValue, uwuCamMain.ShakeValue)
+            if CamMain.Shake then
+                if CamMain.PredictMovement then
+                    if not CheckAnti(CTarget) then
+                        cum = CTarget.Character[CPart].Position + CTarget.Character[CPart].Velocity * CamMain.Prediction + (vect3(
+                            math.random(-CamMain.ShakeValue, CamMain.ShakeValue),
+                            math.random(-CamMain.ShakeValue, CamMain.ShakeValue),
+                            math.random(-CamMain.ShakeValue, CamMain.ShakeValue)
                         ) * 0.1)
                     else
-                        cum = CTarget.Character[CPart].Position + ((CTarget.Character.Humanoid.MoveDirection * CTarget.Character.Humanoid.WalkSpeed) * uwuCamMain.Prediction + (vect3(
-                            math.random(-uwuCamMain.ShakeValue, uwuCamMain.ShakeValue),
-                            math.random(-uwuCamMain.ShakeValue, uwuCamMain.ShakeValue),
-                            math.random(-uwuCamMain.ShakeValue, uwuCamMain.ShakeValue)
+                        cum = CTarget.Character[CPart].Position + ((CTarget.Character.Humanoid.MoveDirection * CTarget.Character.Humanoid.WalkSpeed) * CamMain.Prediction + (vect3(
+                            math.random(-CamMain.ShakeValue, CamMain.ShakeValue),
+                            math.random(-CamMain.ShakeValue, CamMain.ShakeValue),
+                            math.random(-CamMain.ShakeValue, CamMain.ShakeValue)
                         ) * 0.1))
                     end
                     pos = c:WorldToViewportPoint(cum)
                 else
                     cum = CTarget.Character[CPart].Position + (vect3(
-                        math.random(-uwuCamMain.ShakeValue, uwuCamMain.ShakeValue),
-                        math.random(-uwuCamMain.ShakeValue, uwuCamMain.ShakeValue),
-                        math.random(-uwuCamMain.ShakeValue, uwuCamMain.ShakeValue)
+                        math.random(-CamMain.ShakeValue, CamMain.ShakeValue),
+                        math.random(-CamMain.ShakeValue, CamMain.ShakeValue),
+                        math.random(-CamMain.ShakeValue, CamMain.ShakeValue)
                     ) * 0.1)
                     pos = c:WorldToViewportPoint(cum)
                 end
             else
-                if uwuCamMain.PredictMovement then
-                    if not uwuCheckAnti(CTarget) then
-                        cum = CTarget.Character[CPart].Position + CTarget.Character[CPart].Velocity * uwuCamMain.Prediction
+                if CamMain.PredictMovement then
+                    if not CheckAnti(CTarget) then
+                        cum = CTarget.Character[CPart].Position + CTarget.Character[CPart].Velocity * CamMain.Prediction
                     else
-                        cum = CTarget.Character[CPart].Position + ((CTarget.Character.Humanoid.MoveDirection * CTarget.Character.Humanoid.WalkSpeed) * uwuCamMain.Prediction)
+                        cum = CTarget.Character[CPart].Position + ((CTarget.Character.Humanoid.MoveDirection * CTarget.Character.Humanoid.WalkSpeed) * CamMain.Prediction)
                     end
                     pos = c:WorldToViewportPoint(cum)
                 else
@@ -340,31 +340,31 @@ rs.RenderStepped:Connect(function()
                     pos = c:WorldToViewportPoint(cum)
                 end
             end
-            if InRadiuwus(CTarget, uwuCamMain, CamlockFOV.Radius) then
+            if InRadis(CTarget, CamMain, CamlockFOV.Radius) then
                 local main = nil
-                if uwuCamMain.SmoothLock then
+                if CamMain.SmoothLock then
                     main = cnew(c.CFrame.p, cum)
-                    c.CFrame = c.CFrame:Lerp(main, uwuCamMain.Smoothness, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+                    c.CFrame = c.CFrame:Lerp(main, CamMain.Smoothness, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
                 else
                     c.CFrame = cnew(c.CFrame.p, cum)
                 end
             end
-            if uwuMain.FOVMode == "Mouse" then
-                if uwuCamFOV.ShowFOV then
+            if Main.FOVMode == "Mouse" then
+                if CamFOV.ShowFOV then
                     CamlockFOV.Position = vect2(m.X, m.Y + 36)
                 end
-                if uwuSilentFOV.ShowFOV then
+                if SilentFOV.ShowFOV then
                     SilentFOV.Position = vect2(m.X, m.Y + 36)
                 end
-            elseif uwuMain.FOVMode == "PredictionPoint" then
-                if uwuCamFOV.ShowFOV then
+            elseif Main.FOVMode == "PredictionPoint" then
+                if CamFOV.ShowFOV then
                     CamlockFOV.Position = vect2(pos.X, pos.Y)
                 end
-                if uwuSilentFOV.ShowFOV then
+                if SilentFOV.ShowFOV then
                     SilentFOV.Position = vect2(pos.X, pos.Y)
                 end
             end
-            if uwuTrace.Enabled then
+            if Trace.Enabled then
                 Line.Visible = true
                 Line.From = vect2(m.X, m.Y + 36)
                 Line.To = vect2(pos.X, pos.Y)
@@ -380,21 +380,21 @@ end)
 lplr.Character.ChildAdded:Connect(function(tool)
     if tool:IsA("Tool") then
         tool.Activated:connect(function()
-            if uwuSilentMain.Mode == "Regular" then
+            if SilentMain.Mode == "Regular" then
                 if SToggle then
-                    STarget = uwuFindTawget()
+                    STarget = FindTawget()
                     if STarget then
-                        SPart = uwuFindSilentPart()
+                        SPart = FindSilentPart()
                         if SPart then
                             Silent()
                         end
                     end
                 end
-            elseif uwuSilentMain.Mode == "Target" then
+            elseif SilentMain.Mode == "Target" then
                 if CToggle then
                     STarget = CTarget
                     if STarget then
-                        SPart = uwuFindSilentPart()
+                        SPart = FindSilentPart()
                         if SPart then
                             Silent()
                         end
@@ -408,21 +408,21 @@ end)
 lplr.CharacterAdded:Connect(function(char)
     char.ChildAdded:Connect(function(tool)
         tool.Activated:connect(function()
-            if uwuSilentMain.Mode == "Regular" then
+            if SilentMain.Mode == "Regular" then
                 if SToggle then
-                    STarget = uwuFindTawget()
+                    STarget = FindTawget()
                     if STarget then
-                        SPart = uwuFindSilentPart()
+                        SPart = FindSilentPart()
                         if SPart then
                             Silent()
                         end
                     end
                 end
-            elseif uwuSilentMain.Mode == "Target" then
+            elseif SilentMain.Mode == "Target" then
                 if CToggle then
                     STarget = CTarget
                     if STarget then
-                        SPart = uwuFindSilentPart()
+                        SPart = FindSilentPart()
                         if SPart then
                             Silent()
                         end
