@@ -18,18 +18,27 @@ function MainEventLocate()
     end
 end
 
-
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Camera = workspace.CurrentCamera
-local Toggle = getgenv().FocusWare.Key360.Toggle
-local RotationSpeed = getgenv().FocusWare.Key360.RotationSpeed
-local Keybind = getgenv().FocusWare.Key360.Keybind
+local Toggle = getgenv().lone.Key360.Toggle
+local RotationSpeed = getgenv().lone.Key360.RotationSpeed
+local Keybind = getgenv().lone.Key360.Keybind
 
 local function OnKeyPress(Input, GameProcessedEvent)
-    if Input.KeyCode == Keybind and not GameProcessedEvent then 
-        Toggle = not Toggle
+    if not GameProcessedEvent then 
+        if Input.KeyCode == Keybind then
+            Toggle = not Toggle
+        elseif Input.KeyCode == Enum.KeyCode[uwuCamMain.UnlockKey:upper()] then
+            if CToggle then
+                CToggle = false
+                CTarget = nil
+                if uwuMain.Notifications then
+                    SendNotification("unlocked")
+                end
+            end
+        end
     end
 end
 
@@ -58,34 +67,32 @@ end
 
 RunService.RenderStepped:Connect(RotateCamera)
 
-
 local mainevent = MainEventLocate()
 
+local uwulone = getgenv().lone
+local uwuMain = uwulone.General
+local uwuCamMain = uwulone.Camlock.Main
+local uwuCamFOV = uwulone.Camlock.FOV
+local uwuSilentMain = uwulone.Silent.Main
+local uwuSilentFOV = uwulone.Silent.FOV
+local uwuTrace = uwulone.Tracer
+local uwuAutoPred = uwulone.AutoPrediction
 
-local uwuFocusWare = getgenv().FocusWare
-local uwuMain = uwuFocusWare.General
-local uwuCamMain = uwuFocusWare.Camlock.Main
-local uwuCamFOV = uwuFocusWare.Camlock.FOV
-local uwuSilentMain = uwuFocusWare.Silent.Main
-local uwuSilentFOV = uwuFocusWare.Silent.FOV
-local uwuTrace = uwuFocusWare.Tracer
-local uwuAutoPred = uwuFocusWare.AutoPrediction
-
---hood custom byppas
+-- Hood custom bypasses
 for _, con in next, getconnections(workspace.CurrentCamera.Changed) do
-  task.wait()
+    task.wait()
     con:Disable()
 end
 for _, con in next, getconnections(workspace.CurrentCamera:GetPropertyChangedSignal("CFrame")) do
-   task.wait()
+    task.wait()
     con:Disable()
 end
 
---adonis byppas
+-- Adonis bypass
 for i,v in next, getgc(true) do
     if type(v) == "table" then
         if type(rawget(v,"indexInstance")) == "table" and v.indexInstance[1] == "kick" then
-            v.indexInstance[2]=function()
+            v.indexInstance[2] = function()
                 warn("Bypassed Adonis::MainModule/Client/Core/Anti.lua :: Thread Yielded")
                 return coroutine.yield()
             end
@@ -97,16 +104,13 @@ local vect3 = Vector3.new
 local vect2 = Vector2.new
 local cnew = CFrame.new
 
-
 local NotificationHolder = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Module.Lua"))()
 local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Client.Lua"))()
-
 
 local uis = game:GetService("UserInputService")
 local rs = game:GetService("RunService")
 local plrs = game:GetService("Players")
 local ws = game:GetService("Workspace")
-
 
 local CToggle = false
 local lplr = plrs.LocalPlayer
@@ -116,26 +120,23 @@ local SToggle = false
 local STarget = nil
 local SPart = nil
 
-
 local m = lplr:GetMouse()
 local c = ws.CurrentCamera
 
-
 local function SendNotification(text)
     Notification:Notify(
-        {Title = "VERSION 3", Description = "FocusWare - "..text},
+        {Title = "VERSION 3", Description = "lone.cc - "..text},
         {OutlineColor = Color3.fromRGB(255,215,255),Time = 2, Type = "image"},
-        {Image = "http://www.roblox.com/asset/?id=18162223377", ImageColor = Color3.fromRGB(0,0,0)}
+        {Image = "rbxassetid://18592190366", ImageColor = Color3.fromRGB(0,0,0)}
     )
 end 
 
 -- Call notification function
 if uwuMain.Notifications then
-    SendNotification("FocusWare Is Loading")
+    SendNotification("lone Is Loading")
     wait(3.5)
-    SendNotification("Successfully Loaded FocusWare")
+    SendNotification("Successfully Loaded lone")
 end
-
 
 local CamlockFOV = Drawing.new("Circle")
 CamlockFOV.Visible = uwuCamFOV.ShowFOV
@@ -146,7 +147,6 @@ CamlockFOV.Color = uwuCamFOV.Color
 CamlockFOV.Filled = uwuCamFOV.Filled
 CamlockFOV.Transparency = uwuCamFOV.Transparency
 
-
 local SilentFOV = Drawing.new("Circle")
 SilentFOV.Visible = uwuSilentFOV.ShowFOV
 SilentFOV.Thickness = 1
@@ -156,10 +156,9 @@ SilentFOV.Color = uwuSilentFOV.Color
 SilentFOV.Filled = uwuSilentFOV.Filled
 SilentFOV.Transparency = uwuSilentFOV.Transparency
 
-
 local function uwuFindTawget() 
     local d, t = math.huge, nil
-    for _,v in pairs (plrs:GetPlayers()) do
+    for _,v in pairs(plrs:GetPlayers()) do
         local _,os = c:WorldToViewportPoint(v.Character.PrimaryPart.Position)
         if v ~= lplr and v.Character and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health ~= 0 and v.Character:FindFirstChild("HumanoidRootPart") and os then
             local pos = c:WorldToViewportPoint(v.Character.PrimaryPart.Position)
@@ -221,7 +220,7 @@ local function uwuCheckAnti(targ) -- // Anti-aim detection
     end
 end
 
-local function InSilentRadiuwus(target, section, fov) --Checks if player is in the fov
+local function InSilentRadiuwus(target, section, fov) -- Checks if player is in the fov
     if target then
         local pos = nil
         if not uwuCheckAnti(target) then
@@ -250,7 +249,6 @@ local function Silent()
     end
 end
 
-
 local function InRadiuwus(target, section, fov) -- Checks if player is in the fov
     if target then
         if uwuCamFOV.UseFOV then
@@ -272,33 +270,25 @@ local function InRadiuwus(target, section, fov) -- Checks if player is in the fo
     end
 end
 
-uis.InputBegan:Connect(function(k,t)
+uis.InputBegan:Connect(function(k, t)
     if not t then
         if k.KeyCode == Enum.KeyCode[uwuCamMain.Key:upper()] then
-            CToggle = true
-            CTarget = uwuFindTawget()
-            if uwuMain.Notifications then
-                SendNotification("locked onto "..CTarget.Name)
-            end
-        elseif k.KeyCode == Enum.KeyCode[uwuCamMain.UnlockKey:upper()] then
+            CToggle = not CToggle
             if CToggle then
-                CToggle = false
+                CTarget = uwuFindTawget()
+                if uwuMain.Notifications and CTarget then
+                    SendNotification("locked onto "..CTarget.Name)
+                end
+            else
                 CTarget = nil
                 if uwuMain.Notifications then
                     SendNotification("unlocked")
                 end
             end
         elseif k.KeyCode == Enum.KeyCode[uwuSilentMain.Toggle:upper()] and uwuSilentMain == "Regular" then
-            if SToggle then
-                SToggle = false
-                if uwuMain.Notifications then
-                    SendNotification("silent disabled")
-                end
-            else
-                SToggle = true
-                if uwuMain.Notifications then
-                    SendNotification("silent enabled")
-                end
+            SToggle = not SToggle
+            if uwuMain.Notifications then
+                SendNotification(SToggle and "silent enabled" or "silent disabled")
             end
         end
     end
